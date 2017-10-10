@@ -17,8 +17,8 @@ from scipy.integrate import ode
 
 # simulation parameters
 num_masses = 10
-length = 0.4
-total_mass = 0.1
+length = 2.
+total_mass = 0.3
 start_height = 5
 rest_length = length/num_masses
 DAMPING = True
@@ -88,9 +88,9 @@ class Mass:
             dvy = 0
         else:
             for other in self.adjacent:
-                distance = self.y - other.y
+                distance = other.y - self.y
                 direction = distance/abs(distance)
-                spring_x  = -direction*rest_length + distance
+                spring_x  = (rest_length - abs(distance))*direction
                 dvy += (-spring_constant*spring_x)/mass
 
             # add damping

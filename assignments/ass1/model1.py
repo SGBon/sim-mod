@@ -16,12 +16,12 @@ from matplotlib import animation
 from scipy.integrate import ode
 
 # simulation parameters
-num_masses = 10
-length = 2.
-total_mass = 0.3
+num_masses = 2
+length = 0.7
+total_mass = 0.2
 start_height = 5
 rest_length = length/num_masses
-DAMPING = True
+DAMPING = False
 
 # Setup figure
 fig = plt.figure(1)
@@ -68,7 +68,7 @@ class Mass:
         # constants
         self.k = 2.3 # spring constant
         self.m = mass # mass
-        self.c = 0.05 #damping constant
+        self.c = 0.1 #damping constant
         self.g = -9.8
 
         self.solver = ode(self.ode_func)
@@ -90,7 +90,7 @@ class Mass:
             for other in self.adjacent:
                 distance = other.y - self.y
                 direction = distance/abs(distance)
-                spring_x  = (rest_length - abs(distance))*direction
+                spring_x = (rest_length - abs(distance))*direction
                 dvy += (-spring_constant*spring_x)/mass
 
             # add damping

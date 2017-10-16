@@ -25,7 +25,7 @@ DAMPING = True
 
 # Setup figure
 fig = plt.figure(1)
-ax = plt.axes(xlim=(-2, 2), ylim=(-5, start_height + length + 1))
+ax = plt.axes(xlim=(-2, 2), ylim=(-1, start_height + length + 1))
 plt.grid()
 line, = ax.plot([], [], '.')
 time_template = 'time = %.1fs'
@@ -114,6 +114,12 @@ class Slinky:
     def __init__(self, num_masses, length, height = 2):
         self.masses = []
 
+        self.top_y = []
+        self.bot_y = []
+        self.plot_t = []
+
+        self.bot_release_point = 0.0
+
         self.cur_time = 0
         self.dt = 0.01
 
@@ -141,17 +147,30 @@ class Slinky:
         for mass in self.masses:
             mass.update(self.cur_time)
 
-        # when bottom most mass is mostly motionless, release top
         bottom = self.masses[0]
         top = self.masses[len(self.masses)-1]
+
+
+        # when bottom most mass is mostly motionless, release top
         if abs(bottom.vy) < 0.001 and top.held == True:
             top.held = False
+            self.bot_release_point = bottom.y
             print "Top released with bottom at %f" % bottom.y
+        # while slinky is dropping, save the positions
+        elif top.held == False:
+            self.top_y.append(top.y)
+            self.bot_y.append(bottom.y)
+            self.plot_t.append(self.cur_time)
 
-        # check when top reaches bottom
-        if top.y < bottom.y and self.top_above:
+        # check when top reaches where bottom was, show plot
+        if top.y < self.bot_release_point - 1 and self.top_above:
             self.top_above = False
-            print "Top of slinky reached bottom of slinky at %f" % bottom.y
+            global fig
+            plt.close(fig)
+            plt.plot(self.plot_t,self.top_y,self.plot_t,self.bot_y)
+            plt.xlabel("Time (s)")
+            plt.ylabel("Height (m)")
+            plt.show()
 
 
 slinky = Slinky(num_masses, length, start_height)

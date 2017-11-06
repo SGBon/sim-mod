@@ -10,15 +10,19 @@ def estimate_pi(n_samples,rnd_seed=0):
     distances = np.sqrt(np.power(samples_x,2) + np.power(samples_y,2))
     return 4.0 * np.sum(distances <= 1.0) / float(n_samples)
 
-
 averages = []
-for i in range(2,8):
+deviation = []
+for i in range(2,9):
     total = 0
+    approx = []
     for run in range(N_RUNS):
         n_samples = pow(10,i)
-        result = estimate_pi(n_samples,run)
-        print result
-        total += result
-    averages.append(total/N_RUNS)
+        approx.append(estimate_pi(n_samples,run))
+    print "Aproximation", approx,pow(10,i)
+    average = np.mean(approx)
+    averages.append(average)
+    deviation.append(np.abs(np.array(approx) - average))
 
-print averages
+deviation = np.array(deviation)
+print "Averages: ", averages
+print "Deviation from average", deviation

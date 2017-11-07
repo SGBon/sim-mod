@@ -21,6 +21,7 @@ BLUE = (0, 0, 255)
 win_width = 640
 win_height = 640
 visual_scale = 10
+WALL_DIST = 5
 
 def normalize(v):
     return v / np.linalg.norm(v)
@@ -56,8 +57,14 @@ class Disk2D(pygame.sprite.Sprite):
         return self
 
     def update(self, dt):
+        global WALL_DIST
         self.t += dt
         self.state = self.solver.integrate(self.t)
+        if ((self.state[0] - self.radius) < 0 and self.state[2] < 0) or ((self.state[0] + self.radius) > WALL_DIST and self.state[2] > 0):
+             self.set_vel([-self.state[2],self.state[3]])
+
+        if ((self.state[1] - self.radius) < 0 and self.state[3] < 0) or ((self.state[1]+self.radius) > WALL_DIST and self.state[3] > 0):
+            self.set_vel([self.state[2],-self.state[3]])
 
     def move_by(self, delta):
         self.state[0:2] = np.add(self.pos, delta)
